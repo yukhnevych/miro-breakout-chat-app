@@ -1,8 +1,8 @@
 import {CLIENT_ID} from '../config'
 import appIcon from './icon'
 
-const initChat = (breakoutChatRoomId: string) => {
-	miro.__setRuntimeState({
+const initChat = async (breakoutChatRoomId: string) => {
+	await miro.__setRuntimeState({
 		[CLIENT_ID]: {
 			breakoutChatRoomId,
 		},
@@ -48,6 +48,16 @@ const initPlugin = async () => {
 		const widgets = await miro.board.selection.get()
 		if (widgets.length === 1 && widgets[0].metadata[CLIENT_ID]?.isBreakoutChatButton) {
 			initChat(widgets[0].id)
+		}
+	})
+
+	// @ts-ignore
+	miro.addListener(miro.enums.event.WIDGETS_DELETED, async (event) => {
+		const state = await miro.__getRuntimeState()
+		const roomId = state[CLIENT_ID]?.breakoutChatRoomId;
+
+		if (roomId && event.data.find(item => item.id === roomId)) {
+			miro.board.ui.closeLeftSidebar()
 		}
 	})
 
