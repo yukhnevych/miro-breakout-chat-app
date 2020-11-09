@@ -46,8 +46,8 @@ class ChatController {
 
 		room.addSocket(this.socket)
 		room.addName(this.socket, this.user.name)
-		this.socket.join(roomId)
 
+		this.socket.join(roomId)
 		this.io.to(roomId).emit('system message', `${this.user.name} joined ${roomId}`)
 
 		if (callback) {
@@ -67,8 +67,11 @@ class ChatController {
 		const message = messageStorage.add(roomId, msg, this.user)
 
 		this.io.to(roomId).emit('chat message', message)
+	}
 
-		console.log(messageStorage.all())
+	deleteRoom(roomId) {
+		roomsStorage.remove(roomId)
+		messageStorage.remove(roomId)
 	}
 
 	disconnect() {
@@ -78,8 +81,6 @@ class ChatController {
 		const room = roomsStorage.get(roomId)
 
 		this.io.to(roomId).emit('system message', `${this.user.name} left ${roomId}`)
-
-		console.log(messageStorage.all())
 
 		if (room) {
 			room.removeSocket(this.socket)
