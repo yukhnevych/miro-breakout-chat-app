@@ -61,8 +61,13 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
-		height: calc(100% - 120px);
+		height: calc(100% - 140px);
 		padding: 0 24px;
+	}
+
+	.chat__messages {
+		min-height: 0;
+		overflow: auto;
 	}
 
 	.sidebar__footer {
@@ -79,9 +84,11 @@
 		<span class="miro-h2">Breakout Chat</span>
 	</div>
 	<div class="sidebar__body">
-		{#each messages as message}
-			<Message {message} />
-		{/each}
+		<div class="chat__messages">
+			{#each messages as message}
+				<Message {message} />
+			{/each}
+		</div>
 	</div>
 	<div class="sidebar__footer">
 		{#if chatState === ChatState.Loading}
