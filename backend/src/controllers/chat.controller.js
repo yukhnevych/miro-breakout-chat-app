@@ -1,4 +1,5 @@
-const roomsStorage = require('../db/roomsStorage')
+const roomsStorage = require('../db/room.storage')
+const messageStorage = require('../db/message.storage')
 
 class ChatController {
 	constructor(io, socket) {
@@ -50,7 +51,10 @@ class ChatController {
 		this.io.to(roomId).emit('system message', `${this.user.name} joined ${roomId}`)
 
 		if (callback) {
-			callback(null, {success: true})
+			callback(null, {
+				success: true,
+				messages: messageStorage.get(roomId)
+			})
 		}
 
 		this.isConnected = true
@@ -59,7 +63,12 @@ class ChatController {
 	sendMessage(msg) {
 		if (!this.isConnected) return
 
-		this.io.to(roomsStorage.currentRoomId()).emit('chat message', msg, this.user)
+		const roomId = roomsStorage.currentRoomId();
+		const message = messageStorage.add(roomId, msg, this.user)
+
+		this.io.to(roomId).emit('chat message', message)
+
+		console.log(messageStorage.all())
 	}
 
 	disconnect() {
@@ -69,6 +78,8 @@ class ChatController {
 		const room = roomsStorage.get(roomId)
 
 		this.io.to(roomId).emit('system message', `${this.user.name} left ${roomId}`)
+
+		console.log(messageStorage.all())
 
 		if (room) {
 			room.removeSocket(this.socket)

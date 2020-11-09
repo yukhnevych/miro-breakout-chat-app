@@ -1,4 +1,4 @@
-const roomsStorage = require('../db/roomsStorage')
+const roomsStorage = require('../db/room.storage')
 
 class RoomController {
 	all(req, res) {
