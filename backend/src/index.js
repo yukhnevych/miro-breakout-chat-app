@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
 
 	socket.on('join', chatController.connect.bind(chatController))
 	socket.on('chat message', chatController.sendMessage.bind(chatController))
+	socket.on('delete room', chatController.deleteRoom.bind(chatController))
 	socket.on('disconnect', chatController.disconnect.bind(chatController))
 })
 

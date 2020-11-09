@@ -32,6 +32,14 @@ class MessageStorage {
 
 		return [ ...messages ]
 	}
+
+	remove(roomId) {
+		if (roomId && this._messages[roomId]) {
+			return delete this._messages[roomId]
+		}
+
+		return false
+	}
 }
 
 module.exports = new MessageStorage();

@@ -70,7 +70,11 @@ class RoomStorage {
 	}
 
 	remove(roomId) {
-		return delete this._rooms[roomId]
+		if (roomId && this._rooms[roomId]) {
+			return delete this._rooms[roomId]
+		}
+
+		return false
 	}
 }
 
