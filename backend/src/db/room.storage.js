@@ -35,7 +35,7 @@ class Room {
 	}
 }
 
-class Rooms {
+class RoomStorage {
 	constructor() {
 		this._rooms = {}
 		this._currentRoomId = null
@@ -74,4 +74,4 @@ class Rooms {
 	}
 }
 
-module.exports = new Rooms();
+module.exports = new RoomStorage();

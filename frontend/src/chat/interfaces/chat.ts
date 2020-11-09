@@ -1,11 +1,10 @@
 export interface Message {
 	text: string
-	author: string
-	timestamp: Date
+	author: User
+	createdAt: Date
 }
 
-export type AuthHandler = (isAuthorized: boolean) => void
-export type MessageHandler = (msg: string, user: User) => void
+export type Handler<T> = (arg: T) => void
 
 export type EmitHandler = (error: any, response: any) => void
 
@@ -18,8 +17,11 @@ export enum ChatState {
 export interface ChatSettings {
 	roomId: string
 	token: string
-	authHandler: AuthHandler
-	messageHandler: MessageHandler
+	handlers: {
+		auth: Handler<boolean>
+		join: Handler<Message[]>
+		receiveMessage: Handler<Message>
+	}
 }
 
 export interface User {

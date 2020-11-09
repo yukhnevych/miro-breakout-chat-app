@@ -1,10 +1,9 @@
 import io from 'socket.io-client'
 
 import {CHAT_HOST, CHAT_OPTIONS} from '../../config'
-
 import type {ChatSettings, ChatController} from '../interfaces/chat'
 
-const initChat = ({roomId, token, authHandler, messageHandler}: ChatSettings) => {
+const initChat = ({roomId, token, handlers}: ChatSettings) => {
 	const socket = io(CHAT_HOST, {
 		...CHAT_OPTIONS,
 		query: {
@@ -17,10 +16,11 @@ const initChat = ({roomId, token, authHandler, messageHandler}: ChatSettings) =>
 			console.warn(err)
 		}
 
-		authHandler(!err)
+		handlers.join(res.messages || []);
+		handlers.auth(!err);
 	})
 
-	socket.on('chat message', messageHandler)
+	socket.on('chat message', handlers.receiveMessage)
 
 	return {
 		sendMessage: (msg: string) => {

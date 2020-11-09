@@ -3,12 +3,10 @@
 	import Message from './Message.svelte'
 
 	import type {
-		MessageHandler,
-		Message as MessageInterface,
+		Message as IMessage,
 		ChatController,
 		ChatSettings,
 		User,
-		AuthHandler,
 	} from '../../interfaces/chat'
 	import { ChatState } from '../../interfaces/chat'
 
@@ -20,14 +18,7 @@
 	let chatController: ChatController = null
 	let token = user.token
 	let chatState = ChatState.Loading
-
-	let messages: Array<MessageInterface> = []
-	const handleNewMessage: MessageHandler = (text, author) => {
-		messages = [...messages, {text, author: author.name, timestamp: new Date()}]
-	}
-	const authHandler: AuthHandler = (isAuthorized) => {
-		chatState = isAuthorized ? ChatState.Success : ChatState.Unauthorized
-	}
+	let messages: Array<IMessage> = []
 
 	const handleMessageSend = () => {
 		if (!newMessageText) return
@@ -40,7 +31,15 @@
 	}
 
 	onMount(() => {
-		chatController = chatFactory({roomId, token, authHandler, messageHandler: handleNewMessage})
+		chatController = chatFactory({
+			roomId,
+			token,
+			handlers: {
+				auth: (isAuthorized) => chatState = isAuthorized ? ChatState.Success : ChatState.Unauthorized,
+				join: (msgs) => messages = msgs,
+				receiveMessage: (message) => messages = [...messages, {...message}]
+			}
+		})
 	})
 </script>
 
